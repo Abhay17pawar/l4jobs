@@ -11,6 +11,7 @@ export function ThemeToggle() {
 
   // Avoid hydration mismatch, and ensure the theme persists on page refresh
   useEffect(() => {
+    setTheme("light")
     setMounted(true)
   }, [])
 
