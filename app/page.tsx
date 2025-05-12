@@ -33,18 +33,26 @@ export default function Home() {
   const mobileAppRef = useRef<HTMLDivElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
 
-  const heroInView = useInView(heroRef, { once: false, amount: 0.2 })
-  const statsInView = useInView(statsRef, { once: false, amount: 0.3 })
-  const featuredInView = useInView(featuredRef, { once: false, amount: 0.2 })
-  const testimonialsInView = useInView(testimonialsRef, { once: false, amount: 0.3 })
-  const mobileAppInView = useInView(mobileAppRef, { once: false, amount: 0.2 })
-  const ctaInView = useInView(ctaRef, { once: false, amount: 0.5 })
+  const heroInView = useInView(heroRef, { once: true, amount: 0.1 })
+  const statsInView = useInView(statsRef, { once: true, amount: 0.1 })
+  const featuredInView = useInView(featuredRef, { once: true, amount: 0.1 })
+  const testimonialsInView = useInView(testimonialsRef, { once: true, amount: 0.1 })
+  const mobileAppInView = useInView(mobileAppRef, { once: true, amount: 0.1 })
+  const ctaInView = useInView(ctaRef, { once: true, amount: 0.1 })
 
+  // Enhanced parallax effects
   const heroY = useTransform(scrollY, [0, 300], [0, 100])
   const heroOpacity = useTransform(scrollY, [0, 300], [1, 0.5])
-  const parallaxY1 = useTransform(scrollY, [0, 1000], [0, -150])
-  const parallaxY2 = useTransform(scrollY, [0, 1000], [0, -100])
-  const parallaxY3 = useTransform(scrollY, [0, 1000], [0, -50])
+  const parallaxY1 = useTransform(scrollY, [0, 1000], [0, -200])
+  const parallaxY2 = useTransform(scrollY, [0, 1000], [0, -150])
+  const parallaxY3 = useTransform(scrollY, [0, 1000], [0, -100])
+
+  // New scroll animations
+  const rotateRight = useTransform(scrollY, [0, 1000], [0, 10])
+  const rotateLeft = useTransform(scrollY, [0, 1000], [0, -10])
+  const scale = useTransform(scrollY, [0, 500], [1, 1.05])
+  const headerOpacity = useTransform(scrollY, [0, 100], [0.8, 1])
+  const headerBlur = useTransform(scrollY, [0, 100], [8, 12])
 
   const featuredJobs = [
     {
@@ -202,38 +210,44 @@ export default function Home() {
   ]
 
   return (
-    <main className="min-h-screen bg-background transition-colors duration-300 overflow-hidden">
-      {/* Decorative elements */}
+    <main className="min-h-screen bg-background transition-colors duration-500 overflow-hidden">
+      {/* Decorative elements with enhanced animations */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
         <motion.div
-          style={{ y: parallaxY1 }}
+          style={{ y: parallaxY1, rotate: rotateLeft }}
           className="absolute top-0 right-0 w-[800px] h-[800px] rounded-full bg-gradient-to-b from-rose-200/20 to-transparent dark:from-rose-900/10 dark:to-transparent blur-3xl"
         />
         <motion.div
-          style={{ y: parallaxY2 }}
+          style={{ y: parallaxY2, rotate: rotateRight }}
           className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full bg-gradient-to-t from-amber-200/10 to-transparent dark:from-amber-900/5 dark:to-transparent blur-3xl"
         />
         <motion.div
-          style={{ y: parallaxY3 }}
+          style={{ y: parallaxY3, scale }}
           className="absolute top-1/2 left-1/4 w-[500px] h-[500px] rounded-full bg-gradient-to-r from-purple-200/10 to-transparent dark:from-purple-900/5 dark:to-transparent blur-3xl"
         />
       </div>
 
-      <header className="container mx-auto py-4 px-4 md:px-6 sticky top-0 z-50 backdrop-blur-md bg-background/80 border-b">
+      <motion.header
+        style={{
+          backdropFilter: `blur(${headerBlur}px)`,
+          backgroundColor: `rgba(var(--background), ${headerOpacity})`,
+        }}
+        className="container mx-auto py-4 px-4 md:px-6 sticky top-0 z-50 border-b"
+      >
         <div className="flex items-center justify-between">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6 }}
             className="flex items-center gap-2"
           >
-          <Image
-            src="/l4pro.png"
-            alt="L4Jobs Logo"
-            width={120}
-            height={40}
-            className="h-16 w-auto p-2 bg-white rounded-lg shadow-md"
-          />
+            <Image
+              src="/l4pro.png"
+              alt="L4Jobs Logo"
+              width={120}
+              height={40}
+              className="h-16 w-auto p-2 bg-white rounded-lg shadow-md"
+            />
           </motion.div>
           <div className="flex items-center gap-4">
             {/* Mobile Menu Button - Only visible on small screens */}
@@ -267,7 +281,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       <section ref={heroRef} className="relative overflow-hidden">
         <motion.div style={{ y: heroY, opacity: heroOpacity }} className="absolute inset-0 -z-10">
@@ -279,13 +293,13 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.8 }}
             className="text-center max-w-3xl mx-auto"
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={heroInView ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
               className="inline-block mb-6"
             >
               <Badge
@@ -296,50 +310,81 @@ export default function Home() {
               </Badge>
             </motion.div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-amber-500 dark:from-rose-400 dark:to-amber-300">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-amber-500 dark:from-rose-400 dark:to-amber-300"
+            >
               Find Your Dream Job in the USA
-            </h1>
-            <p className="text-lg text-muted-foreground mb-8">
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-lg text-muted-foreground mb-8"
+            >
               Browse thousands of job listings from top companies across the United States. Your next career opportunity
               is just a click away.
-            </p>
+            </motion.p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
             className="bg-card/80 backdrop-blur-sm rounded-xl shadow-lg p-6 max-w-4xl mx-auto border border-border"
           >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="relative">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={heroInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="relative"
+              >
                 <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                 <Input placeholder="Job title or keyword" className="pl-10" />
-              </div>
-              <div className="relative">
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                className="relative"
+              >
                 <MapPin className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                 <Input placeholder="Location" className="pl-10" />
-              </div>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Job Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="full-time">Full-time</SelectItem>
-                  <SelectItem value="part-time">Part-time</SelectItem>
-                  <SelectItem value="contract">Contract</SelectItem>
-                  <SelectItem value="remote">Remote</SelectItem>
-                </SelectContent>
-              </Select>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={heroInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+              >
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Job Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="full-time">Full-time</SelectItem>
+                    <SelectItem value="part-time">Part-time</SelectItem>
+                    <SelectItem value="contract">Contract</SelectItem>
+                    <SelectItem value="remote">Remote</SelectItem>
+                  </SelectContent>
+                </Select>
+              </motion.div>
             </div>
-            <div className="mt-4 flex justify-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={heroInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.6, delay: 0.9 }}
+              className="mt-4 flex justify-center"
+            >
               <Button
                 size="lg"
                 className="bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white border-0 shadow-md hover:shadow-lg transition-all duration-300"
               >
                 Search Jobs
               </Button>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -350,15 +395,20 @@ export default function Home() {
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={statsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={statsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                transition={{ duration: 0.7, delay: index * 0.15 }}
                 className="text-center"
               >
                 <motion.div
                   initial={{ scale: 0.5, opacity: 0 }}
                   animate={statsInView ? { scale: 1, opacity: 1 } : { scale: 0.5, opacity: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+                  transition={{
+                    duration: 0.7,
+                    delay: 0.2 + index * 0.15,
+                    type: "spring",
+                    stiffness: 100,
+                  }}
                   className="mx-auto mb-4 bg-gradient-to-br from-rose-100 to-rose-200 dark:from-rose-900/30 dark:to-rose-800/20 w-16 h-16 rounded-2xl flex items-center justify-center text-rose-500 shadow-md"
                 >
                   <stat.icon className="h-8 w-8" />
@@ -366,12 +416,19 @@ export default function Home() {
                 <motion.h3
                   initial={{ opacity: 0 }}
                   animate={statsInView ? { opacity: 1 } : { opacity: 0 }}
-                  transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
+                  transition={{ duration: 0.7, delay: 0.3 + index * 0.15 }}
                   className="text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-amber-500 dark:from-rose-400 dark:to-amber-300"
                 >
                   {stat.value}
                 </motion.h3>
-                <p className="text-muted-foreground">{stat.label}</p>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={statsInView ? { opacity: 1 } : { opacity: 0 }}
+                  transition={{ duration: 0.7, delay: 0.4 + index * 0.15 }}
+                  className="text-muted-foreground"
+                >
+                  {stat.label}
+                </motion.p>
               </motion.div>
             ))}
           </div>
@@ -380,34 +437,57 @@ export default function Home() {
 
       <section ref={featuredRef} className="container mx-auto py-16 px-4 md:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={featuredInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.5 }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={featuredInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.7 }}
           className="text-center mb-12"
         >
-          <span className="inline-block px-3 py-1 bg-rose-100 dark:bg-rose-900/30 text-rose-500 rounded-full text-sm font-medium mb-3">
+          <motion.span
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={featuredInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="inline-block px-3 py-1 bg-rose-100 dark:bg-rose-900/30 text-rose-500 rounded-full text-sm font-medium mb-3"
+          >
             Featured Opportunities
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Discover Top Jobs</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={featuredInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="text-3xl md:text-4xl font-bold mb-4"
+          >
+            Discover Top Jobs
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={featuredInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="text-muted-foreground max-w-2xl mx-auto"
+          >
             Explore our handpicked selection of top job opportunities from leading companies across the USA.
-          </p>
+          </motion.p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {featuredJobs.map((job, index) => (
             <motion.div
               key={job.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={featuredInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: -5 }}
-              className="group bg-card/80 backdrop-blur-sm rounded-xl shadow-md overflow-hidden border border-border hover:border-rose-300 hover:shadow-lg transition-all duration-300"
+              initial={{ opacity: 0, y: 50 }}
+              animate={featuredInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+              transition={{
+                duration: 0.8,
+                delay: index * 0.2,
+                type: "spring",
+                stiffness: 50,
+                damping: 15,
+              }}
+              whileHover={{ y: -8, transition: { duration: 0.3 } }}
+              className="group bg-card/80 backdrop-blur-sm rounded-xl shadow-md overflow-hidden border border-border hover:border-rose-300 hover:shadow-lg transition-all duration-500"
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="font-semibold text-lg mb-1 group-hover:text-rose-500 transition-colors">
+                    <h3 className="font-semibold text-lg mb-1 group-hover:text-rose-500 transition-colors duration-500">
                       {job.title}
                     </h3>
                     <p className="text-muted-foreground text-sm">{job.company}</p>
@@ -447,10 +527,16 @@ export default function Home() {
                   <h4 className="text-sm font-medium mb-2">Requirements:</h4>
                   <ul className="text-sm text-muted-foreground space-y-1">
                     {job.requirements.map((req, i) => (
-                      <li key={i} className="flex items-start">
+                      <motion.li
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={featuredInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
+                        transition={{ duration: 0.5, delay: 0.5 + index * 0.2 + i * 0.1 }}
+                        className="flex items-start"
+                      >
                         <span className="text-rose-500 mr-2">•</span>
                         {req}
-                      </li>
+                      </motion.li>
                     ))}
                   </ul>
                 </div>
@@ -459,32 +545,49 @@ export default function Home() {
                   <h4 className="text-sm font-medium mb-2">Benefits:</h4>
                   <div className="flex flex-wrap gap-2">
                     {job.benefits.map((benefit, i) => (
-                      <Badge
+                      <motion.div
                         key={i}
-                        variant="secondary"
-                        className="font-normal group-hover:bg-rose-100 group-hover:text-rose-800 dark:group-hover:bg-rose-900/30 dark:group-hover:text-rose-200 transition-colors"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={featuredInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+                        transition={{ duration: 0.5, delay: 0.7 + index * 0.2 + i * 0.1 }}
                       >
-                        {benefit}
-                      </Badge>
+                        <Badge
+                          variant="secondary"
+                          className="font-normal group-hover:bg-rose-100 group-hover:text-rose-800 dark:group-hover:bg-rose-900/30 dark:group-hover:text-rose-200 transition-colors duration-500"
+                        >
+                          {benefit}
+                        </Badge>
+                      </motion.div>
                     ))}
                   </div>
                 </div>
 
-                <Button
-                  variant="outline"
-                  className="w-full mt-2 group/btn border-rose-200 dark:border-rose-800 hover:border-rose-300 dark:hover:border-rose-700"
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={featuredInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                  transition={{ duration: 0.5, delay: 0.9 + index * 0.2 }}
                 >
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-rose-600 dark:from-rose-400 dark:to-rose-500">
-                    View Job
-                  </span>
-                  <ChevronRight className="ml-2 h-4 w-4 text-rose-500 group-hover/btn:translate-x-1 transition-transform" />
-                </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full mt-2 group/btn border-rose-200 dark:border-rose-800 hover:border-rose-300 hover:shadow-md dark:hover:border-rose-700"
+                  >
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-rose-600 dark:from-rose-400 dark:to-rose-500">
+                      View Job
+                    </span>
+                    <ChevronRight className="ml-2 h-4 w-4 text-rose-500 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                  </Button>
+                </motion.div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        <div className="text-center mt-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={featuredInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.7, delay: 1 }}
+          className="text-center mt-10"
+        >
           <Button
             variant="outline"
             size="lg"
@@ -493,17 +596,17 @@ export default function Home() {
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-rose-600 dark:from-rose-400 dark:to-rose-500">
               View All Jobs
             </span>
-            <ChevronRight className="ml-2 h-4 w-4 text-rose-500 group-hover:translate-x-1 transition-transform" />
+            <ChevronRight className="ml-2 h-4 w-4 text-rose-500 group-hover:translate-x-1 transition-transform duration-300" />
           </Button>
-        </div>
+        </motion.div>
       </section>
 
       <section ref={testimonialsRef} className="py-16 bg-muted/30">
         <div className="container mx-auto px-4 md:px-6">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={testimonialsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={testimonialsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.7 }}
             className="text-center mb-12"
           >
             <span className="inline-block px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-full text-sm font-medium mb-3">
@@ -519,13 +622,25 @@ export default function Home() {
             {testimonials.map((testimonial, index) => (
               <motion.div
                 key={testimonial.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={testimonialsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-card/80 backdrop-blur-sm rounded-xl p-6 border border-border relative group hover:shadow-lg transition-all duration-300"
+                initial={{ opacity: 0, y: 50, rotateY: 30 }}
+                animate={testimonialsInView ? { opacity: 1, y: 0, rotateY: 0 } : { opacity: 0, y: 50, rotateY: 30 }}
+                transition={{
+                  duration: 0.8,
+                  delay: index * 0.2,
+                  type: "spring",
+                  stiffness: 50,
+                  damping: 15,
+                }}
+                whileHover={{ y: -10, transition: { duration: 0.4 } }}
+                className="bg-card/80 backdrop-blur-sm rounded-xl p-6 border border-border relative group hover:shadow-lg transition-all duration-500"
               >
                 <div className="absolute -top-5 left-6">
-                  <div className="bg-gradient-to-br from-rose-400 to-amber-400 p-2 rounded-full shadow-md group-hover:scale-110 transition-transform duration-300">
+                  <motion.div
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={testimonialsInView ? { scale: 1, opacity: 1 } : { scale: 0.5, opacity: 0 }}
+                    transition={{ duration: 0.6, delay: 0.3 + index * 0.2 }}
+                    className="bg-gradient-to-br from-rose-400 to-amber-400 p-2 rounded-full shadow-md group-hover:scale-110 transition-transform duration-500"
+                  >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="M9.13456 9H5.37305C5.37305 5.5 7.87305 4.5 9.62305 4.5C10.1231 4.5 10.3731 5 10.1231 5.5C9.87305 6 9.37305 6.5 9.37305 7C9.37305 8 10.3731 9 11.8731 9C13.3731 9 14.3731 8 14.3731 7C14.3731 6.5 13.8731 6 13.6231 5.5C13.3731 5 13.6231 4.5 14.1231 4.5C15.8731 4.5 18.3731 5.5 18.3731 9H14.6231"
@@ -542,13 +657,25 @@ export default function Home() {
                         strokeLinejoin="round"
                       />
                     </svg>
-                  </div>
+                  </motion.div>
                 </div>
 
                 <div className="pt-6">
-                  <p className="text-muted-foreground mb-6 italic">"{testimonial.quote}"</p>
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={testimonialsInView ? { opacity: 1 } : { opacity: 0 }}
+                    transition={{ duration: 0.7, delay: 0.4 + index * 0.2 }}
+                    className="text-muted-foreground mb-6 italic"
+                  >
+                    "{testimonial.quote}"
+                  </motion.p>
 
-                  <div className="flex items-center">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={testimonialsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                    transition={{ duration: 0.7, delay: 0.5 + index * 0.2 }}
+                    className="flex items-center"
+                  >
                     <div className="mr-4">
                       <div className="w-12 h-12 rounded-full overflow-hidden bg-muted border-2 border-rose-200 dark:border-rose-800">
                         <Image
@@ -567,14 +694,20 @@ export default function Home() {
                       </p>
                       <div className="flex mt-1">
                         {[...Array(5)].map((_, i) => (
-                          <Star
+                          <motion.div
                             key={i}
-                            className={`h-3 w-3 ${i < testimonial.rating ? "text-amber-400 fill-amber-400" : "text-muted"}`}
-                          />
+                            initial={{ opacity: 0, scale: 0 }}
+                            animate={testimonialsInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
+                            transition={{ duration: 0.4, delay: 0.6 + index * 0.2 + i * 0.1 }}
+                          >
+                            <Star
+                              className={`h-3 w-3 ${i < testimonial.rating ? "text-amber-400 fill-amber-400" : "text-muted"}`}
+                            />
+                          </motion.div>
                         ))}
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
               </motion.div>
             ))}
@@ -588,36 +721,62 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={mobileAppInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.8 }}
           >
-            <span className="inline-block px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full text-sm font-medium mb-3">
+            <motion.span
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={mobileAppInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="inline-block px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full text-sm font-medium mb-3"
+            >
               Just Launched
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            </motion.span>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              animate={mobileAppInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="text-3xl md:text-4xl font-bold mb-6"
+            >
               We've Launched Our Mobile Apps{" "}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-rose-500 dark:from-purple-400 dark:to-rose-400">
                 Exclusively for You
               </span>
-            </h2>
-            <p className="text-muted-foreground mb-8 text-lg">
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={mobileAppInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="text-muted-foreground mb-8 text-lg"
+            >
               Take your job search on the go with our powerful mobile apps. Get instant notifications, apply with a
               single tap, and manage your career from anywhere.
-            </p>
+            </motion.p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               {appFeatures.map((feature, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={mobileAppInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                  transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={mobileAppInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                  transition={{
+                    duration: 0.7,
+                    delay: 0.4 + index * 0.15,
+                    type: "spring",
+                    stiffness: 50,
+                  }}
                   className="flex items-start gap-3"
                 >
-                  <div className="mt-1 bg-gradient-to-br from-purple-400 to-rose-400 p-2 rounded-lg shadow-md">
+                  <motion.div
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={mobileAppInView ? { scale: 1, opacity: 1 } : { scale: 0.5, opacity: 0 }}
+                    transition={{ duration: 0.6, delay: 0.5 + index * 0.15 }}
+                    whileHover={{ rotate: [0, -10, 10, -5, 5, 0], transition: { duration: 0.5 } }}
+                    className="mt-1 bg-gradient-to-br from-purple-400 to-rose-400 p-2 rounded-lg shadow-md"
+                  >
                     <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                  </div>
+                  </motion.div>
                   <div>
                     <h3 className="font-medium mb-1">{feature.title}</h3>
                     <p className="text-sm text-muted-foreground">{feature.description}</p>
@@ -631,8 +790,9 @@ export default function Home() {
                 href="#"
                 initial={{ opacity: 0, y: 20 }}
                 animate={mobileAppInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-                className="flex items-center gap-2 bg-black text-white px-5 py-3 rounded-xl hover:bg-gray-800 transition-colors"
+                transition={{ duration: 0.7, delay: 0.8 }}
+                whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+                className="flex items-center gap-2 bg-black text-white px-5 py-3 rounded-xl hover:bg-gray-800 transition-colors duration-300"
               >
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M17.5675 12.0084C17.5548 9.53092 19.5593 8.15063 19.6699 8.08643C18.4021 6.17084 16.4367 5.91643 15.7431 5.90084C14.0701 5.72799 12.4525 6.87287 11.6039 6.87287C10.7362 6.87287 9.40562 5.91643 7.97949 5.94756C6.12949 5.97869 4.40649 7.03873 3.47949 8.67092C1.54649 11.9971 2.96699 17.0557 4.81699 19.4975C5.76954 20.6893 6.86954 22.0385 8.30649 21.9846C9.71137 21.9307 10.2525 21.0926 11.9255 21.0926C13.5793 21.0926 14.0887 21.9846 15.5631 21.9537C17.0759 21.9307 18.0284 20.7389 18.9431 19.5369C20.0431 18.1568 20.4963 16.8096 20.5187 16.7352C20.4867 16.7248 17.5817 15.5537 17.5675 12.0084Z" />
@@ -647,8 +807,9 @@ export default function Home() {
                 href="#"
                 initial={{ opacity: 0, y: 20 }}
                 animate={mobileAppInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-                className="flex items-center gap-2 bg-black text-white px-5 py-3 rounded-xl hover:bg-gray-800 transition-colors"
+                transition={{ duration: 0.7, delay: 0.9 }}
+                whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+                className="flex items-center gap-2 bg-black text-white px-5 py-3 rounded-xl hover:bg-gray-800 transition-colors duration-300"
               >
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                   <path
@@ -679,25 +840,64 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={mobileAppInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
             className="relative"
           >
             {/* Enhanced decorative elements */}
             <div className="absolute -z-10 inset-0">
-              <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-gradient-to-br from-purple-300/40 to-rose-300/40 dark:from-purple-900/30 dark:to-rose-900/30 rounded-full blur-3xl animate-pulse-slow"></div>
-              <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-gradient-to-tr from-amber-300/40 to-rose-300/40 dark:from-amber-900/30 dark:to-rose-900/30 rounded-full blur-3xl animate-pulse-slow animation-delay-1000"></div>
+              <motion.div
+                animate={{
+                  scale: [1, 1.1, 1],
+                  opacity: [0.4, 0.6, 0.4],
+                }}
+                transition={{
+                  duration: 8,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "reverse",
+                }}
+                className="absolute top-1/4 right-1/4 w-64 h-64 bg-gradient-to-br from-purple-300/40 to-rose-300/40 dark:from-purple-900/30 dark:to-rose-900/30 rounded-full blur-3xl"
+              ></motion.div>
+              <motion.div
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: [0.4, 0.7, 0.4],
+                }}
+                transition={{
+                  duration: 10,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "reverse",
+                  delay: 1,
+                }}
+                className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-gradient-to-tr from-amber-300/40 to-rose-300/40 dark:from-amber-900/30 dark:to-rose-900/30 rounded-full blur-3xl"
+              ></motion.div>
             </div>
 
             {/* Premium device frame */}
             <div className="relative mx-auto">
               {/* Device reflection/glare effect */}
-              <div className="absolute -inset-4 bg-gradient-to-tr from-white/0 via-white/30 to-white/0 dark:from-white/0 dark:via-white/10 dark:to-white/0 rounded-[60px] z-0 rotate-[20deg] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+              <motion.div
+                animate={{
+                  opacity: [0, 0.3, 0],
+                  rotateZ: [15, 25, 15],
+                }}
+                transition={{
+                  duration: 8,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "reverse",
+                }}
+                className="absolute -inset-4 bg-gradient-to-tr from-white/0 via-white/30 to-white/0 dark:from-white/0 dark:via-white/10 dark:to-white/0 rounded-[60px] z-0"
+              ></motion.div>
 
               {/* Device shadow */}
               <div className="absolute -inset-1 bg-gradient-to-br from-gray-900/20 to-gray-900/0 dark:from-gray-900/40 dark:to-gray-900/0 rounded-[50px] blur-xl z-0 transform translate-y-2"></div>
 
               {/* Phone frame */}
-              <div className="relative mx-auto w-[300px] h-[620px] bg-gradient-to-b from-gray-800 to-black rounded-[40px] border-[12px] border-black overflow-hidden shadow-[0_0_0_2px_rgba(255,255,255,0.1),0_20px_50px_-12px_rgba(0,0,0,0.5)] dark:shadow-[0_0_0_2px_rgba(255,255,255,0.05),0_20px_50px_-12px_rgba(0,0,0,0.8)] backdrop-blur-sm z-10">
+              <motion.div
+                initial={{ rotateY: 30 }}
+                animate={mobileAppInView ? { rotateY: 0 } : { rotateY: 30 }}
+                transition={{ duration: 1, delay: 0.5, type: "spring", stiffness: 50 }}
+                className="relative mx-auto w-[300px] h-[620px] bg-gradient-to-b from-gray-800 to-black rounded-[40px] border-[12px] border-black overflow-hidden shadow-[0_0_0_2px_rgba(255,255,255,0.1),0_20px_50px_-12px_rgba(0,0,0,0.5)] dark:shadow-[0_0_0_2px_rgba(255,255,255,0.05),0_20px_50px_-12px_rgba(0,0,0,0.8)] backdrop-blur-sm z-10"
+              >
                 {/* Power button */}
                 <div className="absolute right-[-14px] top-28 w-[3px] h-12 bg-gray-700 rounded-l-sm"></div>
 
@@ -820,7 +1020,7 @@ export default function Home() {
                           key={job.id}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.1 }}
+                          transition={{ duration: 0.5, delay: index * 0.1 }}
                           className="bg-card rounded-xl p-4 border border-border shadow-sm hover:shadow-md hover:border-rose-200 dark:hover:border-rose-800 transition-all duration-300"
                         >
                           <div className="flex justify-between items-start mb-2">
@@ -885,7 +1085,7 @@ export default function Home() {
                           key={category.name}
                           initial={{ opacity: 0, scale: 0.95 }}
                           animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3, delay: index * 0.05 }}
+                          transition={{ duration: 0.5, delay: index * 0.05 }}
                           className="bg-card rounded-xl p-3 border border-border hover:border-rose-200 dark:hover:border-rose-800 shadow-sm hover:shadow-md transition-all duration-300 flex items-center gap-3"
                         >
                           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-rose-100 to-rose-200 dark:from-rose-900/30 dark:to-rose-800/20 flex items-center justify-center text-rose-500 shadow-sm">
@@ -1010,17 +1210,18 @@ export default function Home() {
 
                 {/* Home indicator */}
                 <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-white rounded-full"></div>
-              </div>
+              </motion.div>
 
               {/* Phone reflection */}
               <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-white/10 to-transparent rounded-t-[40px] z-20 pointer-events-none"></div>
             </div>
 
             {/* Floating elements */}
-                    <motion.div
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.8 }}
+              animate={mobileAppInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.7, delay: 0.8 }}
+              whileHover={{ y: -5, transition: { duration: 0.3 } }}
               className="absolute -right-4 top-20 bg-white dark:bg-gray-800 rounded-xl p-2 shadow-lg hidden md:block"
             >
               <div className="flex items-center gap-2">
@@ -1033,11 +1234,11 @@ export default function Home() {
               </div>
             </motion.div>
 
-
-                      <motion.div
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1 }}
+              animate={mobileAppInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.7, delay: 1 }}
+              whileHover={{ y: -5, transition: { duration: 0.3 } }}
               className="absolute -left-4 bottom-40 bg-white dark:bg-gray-800 rounded-xl p-2 shadow-lg hidden md:block"
             >
               <div className="flex items-center gap-2">
@@ -1054,7 +1255,6 @@ export default function Home() {
                 <span className="text-xs font-medium">New job alert!</span>
               </div>
             </motion.div>
-
           </motion.div>
         </div>
       </section>
@@ -1063,107 +1263,154 @@ export default function Home() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={ctaInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.7 }}
           className="bg-card/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-border"
         >
           <div className="grid grid-cols-1 md:grid-cols-2">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={ctaInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
-              transition={{ duration: 0.7 }}
+              transition={{ duration: 0.8 }}
               className="p-8 md:p-12 relative overflow-hidden"
             >
               <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-rose-200/40 to-transparent dark:from-rose-900/20 dark:to-transparent rounded-full blur-2xl -z-10"></div>
 
-              <div className="inline-block mb-4 bg-gradient-to-br from-rose-400 to-rose-500 p-3 rounded-lg text-white shadow-md">
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={ctaInView ? { scale: 1, opacity: 1 } : { scale: 0.5, opacity: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                whileHover={{ rotate: [0, -5, 5, -3, 3, 0], transition: { duration: 0.5 } }}
+                className="inline-block mb-4 bg-gradient-to-br from-rose-400 to-rose-500 p-3 rounded-lg text-white shadow-md"
+              >
                 <Users className="h-6 w-6" />
-              </div>
-              <h2 className="text-3xl font-bold mb-4">For Job Seekers</h2>
-              <p className="text-muted-foreground mb-6">
+              </motion.div>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                animate={ctaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.7, delay: 0.3 }}
+                className="text-3xl font-bold mb-4"
+              >
+                For Job Seekers
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={ctaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+                className="text-muted-foreground mb-6"
+              >
                 Create a profile, upload your resume, and get matched with your dream job. Set up job alerts to never
                 miss an opportunity.
-              </p>
-              <ul className="space-y-3 mb-6">
-                <li className="flex items-center">
-                  <div className="bg-rose-100 p-1 rounded-full mr-3 dark:bg-rose-900/30">
-                    <ChevronRight className="h-4 w-4 text-rose-500" />
-                  </div>
-                  Create a free account
-                </li>
-                <li className="flex items-center">
-                  <div className="bg-rose-100 p-1 rounded-full mr-3 dark:bg-rose-900/30">
-                    <ChevronRight className="h-4 w-4 text-rose-500" />
-                  </div>
-                  Upload your resume
-                </li>
-                <li className="flex items-center">
-                  <div className="bg-rose-100 p-1 rounded-full mr-3 dark:bg-rose-900/30">
-                    <ChevronRight className="h-4 w-4 text-rose-500" />
-                  </div>
-                  Get matched with employers
-                </li>
-                <li className="flex items-center">
-                  <div className="bg-rose-100 p-1 rounded-full mr-3 dark:bg-rose-900/30">
-                    <ChevronRight className="h-4 w-4 text-rose-500" />
-                  </div>
-                  Track your applications
-                </li>
-              </ul>
-              <Button className="bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white border-0 shadow-md hover:shadow-lg transition-all duration-300">
-                Create Account
-              </Button>
+              </motion.p>
+              <motion.ul
+                initial={{ opacity: 0 }}
+                animate={ctaInView ? { opacity: 1 } : { opacity: 0 }}
+                transition={{ duration: 0.7, delay: 0.5 }}
+                className="space-y-3 mb-6"
+              >
+                {[
+                  "Create a free account",
+                  "Upload your resume",
+                  "Get matched with employers",
+                  "Track your applications",
+                ].map((item, index) => (
+                  <motion.li
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={ctaInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                    transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
+                    className="flex items-center"
+                  >
+                    <div className="bg-rose-100 p-1 rounded-full mr-3 dark:bg-rose-900/30">
+                      <ChevronRight className="h-4 w-4 text-rose-500" />
+                    </div>
+                    {item}
+                  </motion.li>
+                ))}
+              </motion.ul>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={ctaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.7, delay: 1 }}
+                whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+              >
+                <Button className="bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white border-0 shadow-md hover:shadow-lg transition-all duration-300">
+                  Create Account
+                </Button>
+              </motion.div>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={ctaInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
-              transition={{ duration: 0.7 }}
+              transition={{ duration: 0.8 }}
               className="p-8 md:p-12 bg-gradient-to-br from-rose-50 to-transparent dark:from-rose-950/50 dark:to-transparent relative overflow-hidden"
             >
               <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-amber-200/40 to-transparent dark:from-amber-900/20 dark:to-transparent rounded-full blur-2xl -z-10"></div>
 
-              <div className="inline-block mb-4 bg-gradient-to-br from-amber-400 to-amber-500 p-3 rounded-lg text-white shadow-md">
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={ctaInView ? { scale: 1, opacity: 1 } : { scale: 0.5, opacity: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                whileHover={{ rotate: [0, -5, 5, -3, 3, 0], transition: { duration: 0.5 } }}
+                className="inline-block mb-4 bg-gradient-to-br from-amber-400 to-amber-500 p-3 rounded-lg text-white shadow-md"
+              >
                 <Building className="h-6 w-6" />
-              </div>
-              <h2 className="text-3xl font-bold mb-4">For Employers</h2>
-              <p className="text-muted-foreground mb-6">
+              </motion.div>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                animate={ctaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.7, delay: 0.3 }}
+                className="text-3xl font-bold mb-4"
+              >
+                For Employers
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={ctaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+                className="text-muted-foreground mb-6"
+              >
                 Post job listings, browse resumes, and connect with qualified candidates. Streamline your hiring process
                 with our powerful tools.
-              </p>
-              <ul className="space-y-3 mb-6">
-                <li className="flex items-center">
-                  <div className="bg-amber-100 p-1 rounded-full mr-3 dark:bg-amber-900/30">
-                    <ChevronRight className="h-4 w-4 text-amber-500" />
-                  </div>
-                  Post job listings
-                </li>
-                <li className="flex items-center">
-                  <div className="bg-amber-100 p-1 rounded-full mr-3 dark:bg-amber-900/30">
-                    <ChevronRight className="h-4 w-4 text-amber-500" />
-                  </div>
-                  Browse candidate profiles
-                </li>
-                <li className="flex items-center">
-                  <div className="bg-amber-100 p-1 rounded-full mr-3 dark:bg-amber-900/30">
-                    <ChevronRight className="h-4 w-4 text-amber-500" />
-                  </div>
-                  Track applicants
-                </li>
-                <li className="flex items-center">
-                  <div className="bg-amber-100 p-1 rounded-full mr-3 dark:bg-amber-900/30">
-                    <ChevronRight className="h-4 w-4 text-amber-500" />
-                  </div>
-                  Analytics and reporting
-                </li>
-              </ul>
-              <Button
-                variant="outline"
-                className="border-amber-200 dark:border-amber-800 hover:border-amber-300 dark:hover:border-amber-700 bg-white/50 dark:bg-black/20 backdrop-blur-sm"
+              </motion.p>
+              <motion.ul
+                initial={{ opacity: 0 }}
+                animate={ctaInView ? { opacity: 1 } : { opacity: 0 }}
+                transition={{ duration: 0.7, delay: 0.5 }}
+                className="space-y-3 mb-6"
               >
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-400 dark:to-amber-500">
-                  Post a Job
-                </span>
-                <ArrowRight className="ml-2 h-4 w-4 text-amber-500" />
-              </Button>
+                {["Post job listings", "Browse candidate profiles", "Track applicants", "Analytics and reporting"].map(
+                  (item, index) => (
+                    <motion.li
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={ctaInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                      transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
+                      className="flex items-center"
+                    >
+                      <div className="bg-amber-100 p-1 rounded-full mr-3 dark:bg-amber-900/30">
+                        <ChevronRight className="h-4 w-4 text-amber-500" />
+                      </div>
+                      {item}
+                    </motion.li>
+                  ),
+                )}
+              </motion.ul>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={ctaInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.7, delay: 1 }}
+                whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+              >
+                <Button
+                  variant="outline"
+                  className="border-amber-200 dark:border-amber-800 hover:border-amber-300 dark:hover:border-amber-700 bg-white/50 dark:bg-black/20 backdrop-blur-sm"
+                >
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-400 dark:to-amber-500">
+                    Post a Job
+                  </span>
+                  <ArrowRight className="ml-2 h-4 w-4 text-amber-500" />
+                </Button>
+              </motion.div>
             </motion.div>
           </div>
         </motion.div>
