@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "L4Jobs - Find Your Dream Job in the USA",
+  title: "L4Jobs - Find Your Dream Job",
   description:
     "Browse thousands of job listings from top companies across the United States. Your next career opportunity is just a click away.",
     generator: 'v0.dev'

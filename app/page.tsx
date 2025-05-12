@@ -316,7 +316,7 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-amber-500 dark:from-rose-400 dark:to-amber-300"
             >
-              Find Your Dream Job in the USA
+              Find Your Dream Job 
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
